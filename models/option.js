@@ -15,6 +15,7 @@ module.exports = (sequelize) => {
         references: {
           model: "Place",
           key: "placeId",
+          onDelete: "CASCADE",
         },
       },
       isToilet: {

@@ -4,7 +4,7 @@ const { sequelize } = require("./models");
 const cors = require("cors");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // 라우터 불러오기
 const userRoutes = require("./routes/user");
@@ -12,12 +12,18 @@ const placeRoutes = require("./routes/place");
 const gameRoutes = require("./routes/game");
 const optionRoutes = require("./routes/option");
 const participationRoutes = require("./routes/participation");
+const photoRoutes = require("./routes/photo");
 
 // 미들웨어
 app.use(express.json());
 
 // 다른 도메인도 허용(프론트랑 연결)
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // 프론트 주소
+    credentials: true,
+  })
+);
 
 // 라우터 연결
 app.use("/users", userRoutes);
@@ -25,6 +31,7 @@ app.use("/places", placeRoutes);
 app.use("/games", gameRoutes);
 app.use("/options", optionRoutes);
 app.use("/participations", participationRoutes);
+app.use("/uploads", express.static("uploads"));
 
 // 기본 라우터
 app.get("/", (req, res) => {
