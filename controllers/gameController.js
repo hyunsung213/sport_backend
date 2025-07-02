@@ -12,7 +12,12 @@ exports.createGame = async (req, res) => {
 
 exports.getAllGames = async (req, res) => {
   try {
-    const games = await Game.findAll();
+    const games = await Game.findAll({
+      include: [
+        { model: Place, include: [Option, Photo, User] },
+        { model: User },
+      ],
+    });
     res.json(games);
   } catch (err) {
     res.status(500).json({ error: err.message });
