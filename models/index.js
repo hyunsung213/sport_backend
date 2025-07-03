@@ -12,6 +12,8 @@ const User = require("./user")(sequelize);
 const Place = require("./place")(sequelize);
 const Game = require("./game")(sequelize);
 const Participation = require("./participation")(sequelize);
+const Interest = require("./interest")(sequelize);
+
 const Option = require("./option")(sequelize);
 const Photo = require("./photo")(sequelize);
 
@@ -33,7 +35,15 @@ Place.belongsTo(User, { foreignKey: "managerId" });
 Game.belongsToMany(User, { through: Participation, foreignKey: "gameId" });
 User.belongsToMany(Game, { through: Participation, foreignKey: "userId" });
 
-// 5. Place - Photo (1:N 관계)
+// 5. Game - Interest - User (N:N 관계)
+User.belongsToMany(Game, { through: Interest, foreignKey: "userId" });
+Game.belongsToMany(User, { through: Interest, foreignKey: "gameId" });
+
+// Interest에서 개별 조회 가능하게 설정
+Interest.belongsTo(Game, { foreignKey: "gameId" });
+Interest.belongsTo(User, { foreignKey: "userId" });
+
+// 6. Place - Photo (1:N 관계)
 Place.hasMany(Photo, { foreignKey: "placeId", onDelete: "CASCADE" });
 Photo.belongsTo(Place, { foreignKey: "placeId" });
 
@@ -51,4 +61,5 @@ module.exports = {
   Participation,
   Option,
   Photo,
+  Interest,
 };

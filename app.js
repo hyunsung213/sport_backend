@@ -1,5 +1,7 @@
 require("dotenv").config();
-const express = require("express");
+const express = require("express"); // ✅ 정상 express import
+const session = require("express-session"); // ✅ 세션 별도 import
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const { sequelize } = require("./models");
 const cors = require("cors");
 
@@ -13,11 +15,12 @@ const gameRoutes = require("./routes/game");
 const optionRoutes = require("./routes/option");
 const participationRoutes = require("./routes/participation");
 const photoRoutes = require("./routes/photo");
+const interestRoutes = require("./routes/interest");
+const authRoutes = require("./routes/auth");
 
 // 미들웨어
 app.use(express.json());
 
-// 다른 도메인도 허용(프론트랑 연결)
 app.use(
   cors({
     origin: "http://localhost:3000", // 프론트 주소
@@ -25,18 +28,34 @@ app.use(
   })
 );
 
+const sessionStore = new SequelizeStore({ db: sequelize }); // ✅ db 변수 명확히 사용
+sessionStore.sync();
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "비밀키",
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+    cookie: {
+      maxAge: 1000 * 60 * 60,
+      httpOnly: true,
+      secure: false,
+    },
+  })
+);
+
+// 정적 파일 서비스
+app.use("/uploads", express.static("uploads"));
+
 // 라우터 연결
 app.use("/users", userRoutes);
 app.use("/places", placeRoutes);
 app.use("/games", gameRoutes);
 app.use("/options", optionRoutes);
 app.use("/participations", participationRoutes);
-app.use("/uploads", express.static("uploads"));
-
-// 기본 라우터
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+app.use("/interests", interestRoutes);
+app.use("/auth", authRoutes);
 
 // DB 연결 및 서버 실행
 const startServer = async () => {
