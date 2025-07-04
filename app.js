@@ -17,6 +17,7 @@ const participationRoutes = require("./routes/participation");
 const photoRoutes = require("./routes/photo");
 const interestRoutes = require("./routes/interest");
 const authRoutes = require("./routes/auth");
+const noteRoutes = require("./routes/note");
 
 // 미들웨어
 app.use(express.json());
@@ -56,6 +57,7 @@ app.use("/options", optionRoutes);
 app.use("/participations", participationRoutes);
 app.use("/interests", interestRoutes);
 app.use("/auth", authRoutes);
+app.use("/notes", noteRoutes);
 
 // DB 연결 및 서버 실행
 const startServer = async () => {

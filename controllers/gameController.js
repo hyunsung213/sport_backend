@@ -1,4 +1,4 @@
-const { Game, Place, Option, User, Photo } = require("../models");
+const { Game, Place, Option, User, Photo, Note } = require("../models");
 const { Op } = require("sequelize");
 
 exports.createGame = async (req, res) => {
@@ -66,7 +66,7 @@ exports.getGameById = async (req, res) => {
   try {
     const game = await Game.findByPk(req.params.id, {
       include: [
-        { model: Place, include: [Option, Photo, User] },
+        { model: Place, include: [Option, Photo, Note, User] },
         { model: User },
       ],
     });
