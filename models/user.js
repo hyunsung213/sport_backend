@@ -28,7 +28,6 @@ module.exports = (sequelize) => {
       },
       phoneNum: DataTypes.STRING,
       isManager: DataTypes.BOOLEAN,
-      grade: DataTypes.INTEGER,
     },
     {
       tableName: "User",

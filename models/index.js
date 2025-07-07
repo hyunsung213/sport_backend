@@ -16,7 +16,7 @@ const Interest = require("./interest")(sequelize);
 const Note = require("./note")(sequelize);
 const Option = require("./option")(sequelize);
 const Photo = require("./photo")(sequelize);
-
+const Rate = require("./rate")(sequelize);
 // 관계 설정
 
 // 1. Place - Game (1:N)
@@ -51,6 +51,10 @@ Photo.belongsTo(Place, { foreignKey: "placeId" });
 Place.hasOne(Note, { foreignKey: "placeId", onDelete: "CASCADE" });
 Note.belongsTo(Place, { foreignKey: "placeId" });
 
+// 8. User - Rate 1:1 관계
+User.hasOne(Rate, { foreignKey: "userId", onDelete: "CASCADE" });
+Rate.belongsTo(User, { foreignKey: "userId" });
+
 // 추가적으로 Participation에서 Game, User로 접근 가능하게 설정
 Participation.belongsTo(Game, { foreignKey: "gameId" });
 Participation.belongsTo(User, { foreignKey: "userId" });
@@ -67,4 +71,5 @@ module.exports = {
   Photo,
   Interest,
   Note,
+  Rate,
 };
