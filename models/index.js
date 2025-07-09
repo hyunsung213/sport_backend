@@ -17,6 +17,9 @@ const Note = require("./note")(sequelize);
 const Option = require("./option")(sequelize);
 const Photo = require("./photo")(sequelize);
 const Rate = require("./rate")(sequelize);
+const Team = require("./team")(sequelize);
+const Match = require("./match")(sequelize);
+
 // 관계 설정
 
 // 1. Place - Game (1:N)
@@ -55,6 +58,26 @@ Note.belongsTo(Place, { foreignKey: "placeId" });
 User.hasOne(Rate, { foreignKey: "userId", onDelete: "CASCADE" });
 Rate.belongsTo(User, { foreignKey: "userId" });
 
+// 9. User - Team (개별 선수)
+Team.belongsTo(User, { foreignKey: "playerA", as: "PlayerA" });
+Team.belongsTo(User, { foreignKey: "playerB", as: "PlayerB" });
+User.hasMany(Team, { foreignKey: "playerA", as: "TeamsAsPlayerA" });
+User.hasMany(Team, { foreignKey: "playerB", as: "TeamsAsPlayerB" });
+
+// 10. Team - Match (경기 팀) 1:N 관계
+Match.belongsTo(Team, { foreignKey: "teamA", as: "TeamA" });
+Match.belongsTo(Team, { foreignKey: "teamB", as: "TeamB" });
+Team.hasMany(Match, { foreignKey: "teamA", as: "MatchesAsTeamA" });
+Team.hasMany(Match, { foreignKey: "teamB", as: "MatchesAsTeamB" });
+
+// 11. User - Match (MVP 선수) 1:N 관계
+Match.belongsTo(User, { foreignKey: "playerOfMatch", as: "MVP" });
+User.hasMany(Match, { foreignKey: "playerOfMatch", as: "MvpMatches" });
+
+// 12. Game - Match 관계
+Match.belongsTo(Game, { foreignKey: "gameId" });
+Game.hasMany(Match, { foreignKey: "gameId" });
+
 // 추가적으로 Participation에서 Game, User로 접근 가능하게 설정
 Participation.belongsTo(Game, { foreignKey: "gameId" });
 Participation.belongsTo(User, { foreignKey: "userId" });
@@ -72,4 +95,6 @@ module.exports = {
   Interest,
   Note,
   Rate,
+  Team,
+  Match,
 };

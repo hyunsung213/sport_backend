@@ -26,8 +26,20 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      phoneNum: DataTypes.STRING,
-      isManager: DataTypes.BOOLEAN,
+      phoneNum: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      isManager: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      isSuperManager: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
     },
     {
       tableName: "User",

@@ -15,7 +15,7 @@ exports.getAllGames = async (req, res) => {
     const games = await Game.findAll({
       include: [
         { model: Place, include: [Option, Photo, User] },
-        { model: User },
+        { model: User, include: [Rate] },
       ],
     });
     res.json(games);
@@ -50,6 +50,7 @@ exports.getGamesWithDateFilter = async (req, res) => {
         },
         {
           model: User,
+          include: [Rate],
         },
       ],
       order: [["date", "ASC"]],

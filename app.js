@@ -19,6 +19,9 @@ const interestRoutes = require("./routes/interest");
 const authRoutes = require("./routes/auth");
 const noteRoutes = require("./routes/note");
 const rateRoutes = require("./routes/rate");
+const teamRoutes = require("./routes/team");
+const matchRoutes = require("./routes/match");
+const sessionRouter = require("./routes/session");
 
 // 미들웨어
 app.use(express.json());
@@ -60,6 +63,9 @@ app.use("/interests", interestRoutes);
 app.use("/auth", authRoutes);
 app.use("/notes", noteRoutes);
 app.use("/rates", rateRoutes);
+app.use("/teams", teamRoutes);
+app.use("/matches", matchRoutes);
+app.use("/session", sessionRouter);
 
 // DB 연결 및 서버 실행
 const startServer = async () => {

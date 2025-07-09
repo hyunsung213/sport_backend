@@ -28,6 +28,26 @@ exports.getUserById = async (req, res) => {
   }
 };
 
+exports.getMyUser = async (req, res) => {
+  try {
+    const sessionUserId = req.session?.user?.id;
+
+    if (!sessionUserId) {
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
+    }
+    const user = await User.findByPk(sessionUserId); // ✅ 이건 그대로 유지);
+
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    console.error("에러:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.updateUser = async (req, res) => {
   try {
     const [updated] = await User.update(req.body, {

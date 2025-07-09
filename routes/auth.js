@@ -12,7 +12,12 @@ router.post("/login", async (req, res) => {
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) return res.status(401).json({ message: "비밀번호 오류" });
 
-  req.session.user = { id: user.userId, email: user.email };
+  req.session.user = {
+    id: user.userId,
+    email: user.email,
+    isManager: user.isManager,
+    isSuperManager: user.isSuperManager,
+  };
   res.json({ message: "로그인 성공" });
 });
 
@@ -24,9 +29,25 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
-  const { userName, password, email, city, phoneNum } = req.body;
+  const {
+    userName,
+    password,
+    email,
+    city,
+    phoneNum,
+    isManager,
+    isSuperManager,
+  } = req.body;
 
-  if (!userName || !password || !email || !city) {
+  if (
+    !userName ||
+    !password ||
+    !email ||
+    !city ||
+    !phoneNum ||
+    isManager === undefined ||
+    isSuperManager === undefined
+  ) {
     return res.status(400).json({ message: "필수 값을 모두 입력하세요." });
   }
 

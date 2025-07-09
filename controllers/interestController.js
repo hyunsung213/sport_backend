@@ -1,5 +1,4 @@
 const { Interest, Game, Place, Option, Photo, User } = require("../models");
-const game = require("../models/game");
 
 exports.addInterest = async (req, res) => {
   try {

@@ -5,6 +5,7 @@ const userController = require("../controllers/userController");
 // CRUD 라우터
 router.post("/", userController.createUser); // CREATE
 router.get("/", userController.getAllUsers); // READ 전체
+router.get("/my", userController.getMyUser); // READ 내 정보
 router.get("/:id", userController.getUserById); // READ 단일
 router.put("/:id", userController.updateUser); // UPDATE
 router.delete("/:id", userController.deleteUser); // DELETE
