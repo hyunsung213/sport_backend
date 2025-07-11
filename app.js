@@ -66,6 +66,7 @@ app.use("/rates", rateRoutes);
 app.use("/teams", teamRoutes);
 app.use("/matches", matchRoutes);
 app.use("/session", sessionRouter);
+app.use("/photos", photoRoutes);
 
 // DB 연결 및 서버 실행
 const startServer = async () => {

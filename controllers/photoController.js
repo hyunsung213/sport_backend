@@ -1,22 +1,27 @@
 const { Photo, Place } = require("../models");
 
-// 📌 사진 업로드
 exports.uploadPhoto = async (req, res) => {
   try {
     const { placeId } = req.params;
 
     const place = await Place.findByPk(placeId);
-    if (!place)
+    if (!place) {
       return res.status(404).json({ error: "해당 장소가 존재하지 않습니다." });
+    }
+
+    const photoUrl = `/uploads/${req.file.filename}`;
 
     const photo = await Photo.create({
-      placeId: place.id,
-      photoUrl: `/uploads/${req.file.filename}`,
+      placeId: Number(placeId),
+      photoUrl,
     });
 
-    res.json({ message: "사진 업로드 완료", photo });
+    res.status(201).json({
+      message: "사진 업로드 완료",
+      photo,
+    });
   } catch (err) {
-    console.error(err);
+    console.error("❌ 사진 업로드 실패:", err);
     res.status(500).json({ error: "사진 업로드 실패" });
   }
 };

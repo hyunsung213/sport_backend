@@ -14,12 +14,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // 사진 업로드
-router.post("/places/:placeId/photos", upload.single("photo"), uploadPhoto);
+router.post("/places/:placeId", upload.single("photo"), uploadPhoto);
 
 // 특정 장소의 사진 전체 조회
 router.get("/places/:placeId/photos", getPhotosByPlace);
 
 // 사진 삭제
-router.delete("/photos/:photoId", deletePhoto);
+router.delete("/:photoId", deletePhoto);
 
 module.exports = router;
