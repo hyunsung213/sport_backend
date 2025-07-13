@@ -3,6 +3,7 @@ const { Note } = require("../models");
 exports.createNote = async (req, res) => {
   try {
     const note = await Note.create(req.body);
+    console.log(note);
     res.json(note);
   } catch (err) {
     res.status(500).json({ error: err.message });

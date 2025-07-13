@@ -3,7 +3,18 @@ const { Place, Game, Photo, Note, Option, User } = require("../models");
 
 exports.createPlace = async (req, res) => {
   try {
-    const place = await Place.create(req.body);
+    const userId = req.session?.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "로그인 필요합니다" });
+    }
+
+    const { placeName, location } = req.body;
+
+    const place = await Place.create({
+      placeName,
+      location,
+      managerId: userId,
+    });
     res.json(place);
   } catch (err) {
     res.status(500).json({ error: err.message });

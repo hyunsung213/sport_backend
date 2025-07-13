@@ -9,6 +9,36 @@ exports.createUser = async (req, res) => {
   }
 };
 
+exports.createUserForSocial = async (req, res) => {
+  try {
+    const sessionUserId = req.session?.user?.id;
+    if (!sessionUserId) return res.status(401).json({ message: "로그인 필요" });
+    const { userName, phoneNum, city, isManager } = req.body;
+
+    await User.update(
+      { userName, phoneNum, city, isManager },
+      { where: { userId: sessionUserId } }
+    );
+
+    // 2. 갱신된 사용자 정보 다시 조회
+    const updatedUser = await User.findByPk(sessionUserId);
+
+    // 3. 세션에 덮어쓰기
+    req.session.user = {
+      id: updatedUser.userId,
+      userName: updatedUser.userName,
+      email: updatedUser.email,
+      isManager: updatedUser.isManager,
+      isSuperManager: updatedUser.isSuperManager,
+      isSocial: updatedUser.isSocial,
+    };
+
+    res.json({ message: "추가 정보 저장 완료" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();

@@ -3,6 +3,7 @@ const { Option } = require("../models");
 exports.createOption = async (req, res) => {
   try {
     const option = await Option.create(req.body);
+
     res.json(option);
   } catch (err) {
     res.status(500).json({ error: err.message });
