@@ -22,7 +22,6 @@ const seed = async () => {
           email: `user${i}@test.com`,
           phoneNum: `010-0000-00${i}`,
           isManager: Math.random() < 0.5,
-          grade: Math.floor(Math.random() * (2000 - 500 + 1)) + 500,
         })
       );
     }

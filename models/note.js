@@ -1,10 +1,10 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Option = sequelize.define(
-    "Option",
+  const Note = sequelize.define(
+    "Note",
     {
-      optionId: {
+      noteId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -18,32 +18,37 @@ module.exports = (sequelize) => {
           onDelete: "CASCADE",
         },
       },
-      isToilet: {
-        type: DataTypes.BOOLEAN,
+      direction: {
+        type: DataTypes.STRING,
         defaultValue: false,
+        allowNull: true,
       },
-      isShowerRoom: {
-        type: DataTypes.BOOLEAN,
+      parking: {
+        type: DataTypes.STRING,
         defaultValue: false,
+        allowNull: true,
       },
-      isParkingLot: {
-        type: DataTypes.BOOLEAN,
+      smoking: {
+        type: DataTypes.STRING,
         defaultValue: false,
+        allowNull: true,
       },
-      isShuttlecock: {
-        type: DataTypes.BOOLEAN,
+      stringingService: {
+        type: DataTypes.STRING,
         defaultValue: false,
+        allowNull: true,
       },
-      isIndoor: {
-        type: DataTypes.BOOLEAN,
+      etc: {
+        type: DataTypes.STRING,
         defaultValue: false,
+        allowNull: true,
       },
     },
     {
-      tableName: "Option",
+      tableName: "Note",
       timestamps: false,
     }
   );
 
-  return Option;
+  return Note;
 };

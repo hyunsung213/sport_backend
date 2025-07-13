@@ -1,31 +1,32 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Game = sequelize.define(
-    "Game",
+  const Rate = sequelize.define(
+    "Rate",
     {
-      gameId: {
+      rateId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      placeId: {
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Place",
-          key: "placeId",
+          model: "User",
+          key: "userId",
         },
       },
-      date: DataTypes.DATE,
-      numOfMember: DataTypes.INTEGER,
-      cost: DataTypes.INTEGER,
+      rateValue: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
     {
-      tableName: "Game",
+      tableName: "Rate",
       timestamps: true,
     }
   );
 
-  return Game;
+  return Rate;
 };
