@@ -61,3 +61,19 @@ exports.getAllMatches = async (req, res) => {
     res.status(500).json({ message: "경기 목록 조회 실패" });
   }
 };
+
+// 경기 점수 입력
+exports.putMatchById = async (req, res) => {
+  try {
+    const [updated] = await Match.update(req.body, {
+      where: { matchId: req.params.matchId },
+    });
+    console.log(req.body);
+    console.log(updated);
+    if (updated) res.json({ message: "Match updated" });
+    else res.status(404).json({ error: "Game not found" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "경기 목록 조회 실패" });
+  }
+};

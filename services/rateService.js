@@ -11,23 +11,14 @@ const calculateNewRate = (currentRate, opponentRate, result, k = 20) => {
   return Math.round(newRate);
 };
 
-/**
- * 유저 점수 업데이트 메인 로직
- * @param {number} userId - 대상 유저 ID
- * @param {number} opponentRate - 상대방 현재 점수
- * @param {number} result - 경기 결과 (승 1, 패 0, 무 0.5)
- */
-const updateUserRate = async (userId, opponentRate, result) => {
-  const rateRecord = await Rate.findOne({ where: { userId } });
-  if (!rateRecord) throw new Error("Rate 정보가 없습니다.");
+// Rate 최신화하기
+exports.updateUserRate = async (userId, opponentRate, result) => {
+  const rate = await Rate.findOne({ where: { userId } });
+  if (!rate) throw new Error("Rate 정보가 없습니다.");
 
-  const newRateValue = calculateNewRate(
-    rateRecord.rateValue,
-    opponentRate,
-    result
-  );
+  const newRateValue = calculateNewRate(rate.rateValue, opponentRate, result);
 
-  await rateRecord.update({ rateValue: newRateValue });
+  await rate.update({ rateValue: newRateValue });
 
   return newRateValue;
 };
@@ -46,9 +37,4 @@ const calculateDoublesRate = (teamARates, teamBRates, winningTeam) => {
     deltaA: Math.round(deltaA),
     deltaB: Math.round(deltaB),
   };
-};
-
-module.exports = {
-  calculateNewRate,
-  updateUserRate,
 };

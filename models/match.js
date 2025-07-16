@@ -40,7 +40,7 @@ module.exports = (sequelize) => {
         },
       },
       winnerTeam: {
-        type: DataTypes.ENUM("ATeam", "BTeam"),
+        type: DataTypes.ENUM("TeamA", "TeamB"),
         allowNull: false,
       },
       teamAScore: {

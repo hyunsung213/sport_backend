@@ -23,6 +23,9 @@ const teamRoutes = require("./routes/team");
 const matchRoutes = require("./routes/match");
 const sessionRouter = require("./routes/session");
 
+// 스케쥴러 불러오기
+require("./scheduler/autoCancelUnpaid");
+
 // 미들웨어
 app.use(express.json());
 

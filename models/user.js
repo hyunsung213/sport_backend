@@ -35,6 +35,11 @@ module.exports = (sequelize) => {
         defaultValue: false,
         allowNull: false,
       },
+      isSupporter: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
       isSuperManager: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

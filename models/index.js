@@ -42,6 +42,10 @@ User.belongsToMany(Game, { through: Participation, foreignKey: "userId" });
 User.belongsToMany(Game, { through: Interest, foreignKey: "userId" });
 Game.belongsToMany(User, { through: Interest, foreignKey: "gameId" });
 
+// Game - User (N:1 관계)
+User.hasMany(Game, { foreignKey: "supporterId", as: "GamesAsSupporter" });
+Game.belongsTo(User, { foreignKey: "supporterId", as: "Supporter" });
+
 // Interest에서 개별 조회 가능하게 설정
 Interest.belongsTo(Game, { foreignKey: "gameId" });
 Interest.belongsTo(User, { foreignKey: "userId" });

@@ -17,9 +17,19 @@ module.exports = (sequelize) => {
           key: "placeId",
         },
       },
+      supporterId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: "User",
+          key: "userId",
+        },
+      },
       date: DataTypes.DATE,
       numOfMember: DataTypes.INTEGER,
       cost: DataTypes.INTEGER,
+      isProceed: DataTypes.BOOLEAN,
+      isFinished: DataTypes.BOOLEAN,
     },
     {
       tableName: "Game",

@@ -9,6 +9,7 @@ router.put("/social", userController.createUserForSocial); // ← 먼저!
 
 // READ (특수 경로 먼저)
 router.get("/my", userController.getMyUser); // ← 먼저!
+router.get("/supporters", userController.getSupporters);
 router.get("/", userController.getAllUsers);
 router.get("/:id", userController.getUserById); // ← 마지막에!
 

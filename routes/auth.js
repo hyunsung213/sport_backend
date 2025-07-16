@@ -32,6 +32,7 @@ router.post("/login", async (req, res) => {
     email: user.email,
     userName: user.userName,
     isManager: user.isManager,
+    isSupporter: user.isSupporter,
     isSuperManager: user.isSuperManager,
     isSocial: user.isSocial,
   };
@@ -55,6 +56,7 @@ router.post("/signup", async (req, res) => {
     city,
     phoneNum,
     isManager,
+    isSupporter = false,
     isSuperManager = false,
   } = req.body;
 
@@ -76,6 +78,7 @@ router.post("/signup", async (req, res) => {
       phoneNum,
       isManager,
       isSuperManager,
+      isSupporter,
       isSocial: false,
     });
 
@@ -130,6 +133,7 @@ router.get("/kakao", async (req, res) => {
         email,
         isSocial: true,
         isManager: false,
+        isSupporter: false,
         isSuperManager: false,
       });
       isNewUser = true;
@@ -140,6 +144,7 @@ router.get("/kakao", async (req, res) => {
       userName: user.userName,
       email: user.email,
       isManager: user.isManager,
+      isSupporter: user.isSupporter,
       isSuperManager: user.isSuperManager,
       isSocial: user.isSocial,
     };
@@ -200,6 +205,7 @@ router.get("/google", async (req, res) => {
         email,
         isSocial: true,
         isManager: false,
+        isSupporter: false,
         isSuperManager: false,
       });
       isNewUser = true;
@@ -211,6 +217,7 @@ router.get("/google", async (req, res) => {
       userName: user.userName,
       email: user.email,
       isManager: user.isManager,
+      isSupporter: user.isSupporter,
       isSuperManager: user.isSuperManager,
       isSocial: user.isSocial,
     };
