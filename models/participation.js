@@ -20,6 +20,9 @@ module.exports = (sequelize) => {
           key: "userId",
         },
       },
+      isConfirmed: {
+        type: DataTypes.BOOLEAN,
+      },
     },
     {
       tableName: "Participation",

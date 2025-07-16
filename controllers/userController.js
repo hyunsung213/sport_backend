@@ -30,6 +30,7 @@ exports.createUserForSocial = async (req, res) => {
       email: updatedUser.email,
       isManager: updatedUser.isManager,
       isSuperManager: updatedUser.isSuperManager,
+      isSupporter: updatedUser.isSupporter,
       isSocial: updatedUser.isSocial,
     };
 
@@ -71,6 +72,35 @@ exports.getMyUser = async (req, res) => {
       res.json(user);
     } else {
       res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    console.error("에러:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getSupporters = async (req, res) => {
+  try {
+    const sessionUserId = req.session?.user?.id;
+
+    if (!sessionUserId) {
+      console.log("efvwrgefr");
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
+    }
+    if (!req.session?.user.isSuperManager) {
+      return res.status(401).json({ message: "당신은 슈펴관리자가 아닙니다." });
+    }
+
+    const supporters = await User.findAll({
+      where: {
+        isSupporter: true,
+      },
+    });
+
+    if (supporters) {
+      res.json(supporters);
+    } else {
+      res.status(404).json({ error: "Supporter not found" });
     }
   } catch (err) {
     console.error("에러:", err);
