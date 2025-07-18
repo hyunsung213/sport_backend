@@ -1,7 +1,5 @@
 require("dotenv").config();
 const express = require("express"); // ✅ 정상 express import
-const session = require("express-session"); // ✅ 세션 별도 import
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const { sequelize } = require("./models");
 const cors = require("cors");
 
@@ -21,7 +19,6 @@ const noteRoutes = require("./routes/note");
 const rateRoutes = require("./routes/rate");
 const teamRoutes = require("./routes/team");
 const matchRoutes = require("./routes/match");
-const sessionRouter = require("./routes/session");
 
 // 스케쥴러 불러오기
 require("./scheduler/autoCancelUnpaid");
@@ -33,23 +30,6 @@ app.use(
   cors({
     origin: "http://localhost:3000", // 프론트 주소
     credentials: true,
-  })
-);
-
-const sessionStore = new SequelizeStore({ db: sequelize }); // ✅ db 변수 명확히 사용
-sessionStore.sync();
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "비밀키",
-    resave: false,
-    saveUninitialized: false,
-    store: sessionStore,
-    cookie: {
-      maxAge: 1000 * 60 * 60,
-      httpOnly: true,
-      secure: false,
-    },
   })
 );
 
@@ -68,7 +48,6 @@ app.use("/notes", noteRoutes);
 app.use("/rates", rateRoutes);
 app.use("/teams", teamRoutes);
 app.use("/matches", matchRoutes);
-app.use("/session", sessionRouter);
 app.use("/photos", photoRoutes);
 
 // DB 연결 및 서버 실행

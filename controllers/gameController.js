@@ -99,16 +99,16 @@ exports.getGameById = async (req, res) => {
 // 서포터에게 게임 정보 제공하기
 exports.getGamesForSupport = async (req, res) => {
   try {
-    const sessionUserId = req.session?.user?.id;
-    if (!sessionUserId) {
+    const userId = req.user?.userId;
+    if (!userId) {
       return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
-    if (!req.session?.user.isSupporter) {
-      return res.status(401).json({ message: "당신은 서포터가 아닙니다." });
+    if (!req.user?.isSupporter) {
+      return res.status(403).json({ message: "당신은 서포터가 아닙니다." });
     }
 
     const games = await Game.findAll({
-      where: { supporterId: sessionUserId },
+      where: { supporterId: userId },
       include: [
         {
           model: Place,

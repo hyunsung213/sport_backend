@@ -3,9 +3,9 @@ const { Place, Game, Photo, Note, Option, User } = require("../models");
 
 exports.createPlace = async (req, res) => {
   try {
-    const userId = req.session?.user?.id;
+    const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: "로그인 필요합니다" });
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
 
     const { placeName, location } = req.body;
@@ -58,9 +58,9 @@ exports.getPlaceById = async (req, res) => {
 
 exports.getMyPlace = async (req, res) => {
   try {
-    const userId = req.session?.user?.id;
+    const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: "로그인 필요합니다" });
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
 
     const place = await Place.findAll({

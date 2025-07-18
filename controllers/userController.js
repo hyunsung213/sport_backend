@@ -11,30 +11,41 @@ exports.createUser = async (req, res) => {
 
 exports.createUserForSocial = async (req, res) => {
   try {
-    const sessionUserId = req.session?.user?.id;
-    if (!sessionUserId) return res.status(401).json({ message: "로그인 필요" });
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
+    }
+
     const { userName, phoneNum, city, isManager } = req.body;
 
+    // 1. 사용자 정보 업데이트
     await User.update(
       { userName, phoneNum, city, isManager },
-      { where: { userId: sessionUserId } }
+      { where: { userId } }
     );
 
     // 2. 갱신된 사용자 정보 다시 조회
-    const updatedUser = await User.findByPk(sessionUserId);
+    const updatedUser = await User.findByPk(userId);
 
-    // 3. 세션에 덮어쓰기
-    req.session.user = {
-      id: updatedUser.userId,
-      userName: updatedUser.userName,
-      email: updatedUser.email,
-      isManager: updatedUser.isManager,
-      isSuperManager: updatedUser.isSuperManager,
-      isSupporter: updatedUser.isSupporter,
-      isSocial: updatedUser.isSocial,
-    };
+    if (!updatedUser) {
+      return res
+        .status(404)
+        .json({ message: "사용자 정보를 찾을 수 없습니다." });
+    }
 
-    res.json({ message: "추가 정보 저장 완료" });
+    // ✅ 프론트가 직접 저장하거나, refetchUser로 갱신하도록 유저 정보 응답
+    res.json({
+      message: "추가 정보 저장 완료",
+      user: {
+        userId: updatedUser.userId,
+        userName: updatedUser.userName,
+        email: updatedUser.email,
+        isManager: updatedUser.isManager,
+        isSuperManager: updatedUser.isSuperManager,
+        isSupporter: updatedUser.isSupporter,
+        isSocial: updatedUser.isSocial,
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -61,12 +72,12 @@ exports.getUserById = async (req, res) => {
 
 exports.getMyUser = async (req, res) => {
   try {
-    const sessionUserId = req.session?.user?.id;
-
-    if (!sessionUserId) {
+    const userId = req.user?.userId;
+    if (!userId) {
       return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
-    const user = await User.findByPk(sessionUserId); // ✅ 이건 그대로 유지);
+
+    const user = await User.findByPk(userId); // ✅ 이건 그대로 유지);
 
     if (user) {
       res.json(user);
@@ -81,13 +92,12 @@ exports.getMyUser = async (req, res) => {
 
 exports.getSupporters = async (req, res) => {
   try {
-    const sessionUserId = req.session?.user?.id;
-
-    if (!sessionUserId) {
-      console.log("efvwrgefr");
+    const userId = req.user?.userId;
+    if (!userId) {
       return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
-    if (!req.session?.user.isSuperManager) {
+
+    if (!req.user?.isSuperManager) {
       return res.status(401).json({ message: "당신은 슈펴관리자가 아닙니다." });
     }
 
