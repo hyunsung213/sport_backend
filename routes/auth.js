@@ -2,16 +2,32 @@ const express = require("express");
 const router = express.Router();
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const axios = require("axios");
+const { authenticateToken } = require("../middleware/auth");
 
-// 카카오 인증정보
 const KAKAO_REST_APP_KEY = process.env.KAKAO_APP_KEY;
 const KAKAO_REDIRECT_URI = process.env.KAKAO_REDIRECT_URI;
-
-// 구글 인증정보
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// 토큰 생성 함수
+const createToken = (user) =>
+  jwt.sign(
+    {
+      userId: user.userId,
+      email: user.email,
+      userName: user.userName,
+      isManager: user.isManager,
+      isSupporter: user.isSupporter,
+      isSuperManager: user.isSuperManager,
+      isSocial: user.isSocial,
+    },
+    JWT_SECRET,
+    { expiresIn: "7d" }
+  );
 
 // 로그인
 router.post("/login", async (req, res) => {
@@ -27,24 +43,13 @@ router.post("/login", async (req, res) => {
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) return res.status(401).json({ message: "비밀번호 오류" });
 
-  req.session.user = {
-    id: user.userId,
-    email: user.email,
-    userName: user.userName,
-    isManager: user.isManager,
-    isSupporter: user.isSupporter,
-    isSuperManager: user.isSuperManager,
-    isSocial: user.isSocial,
-  };
-  res.json({ message: "로그인 성공" });
+  const token = createToken(user);
+  res.json({ message: "로그인 성공", token });
 });
 
-// 로그아웃
+// 로그아웃 (프론트에서 토큰 삭제하면 끝)
 router.post("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.clearCookie("connect.sid");
-    res.json({ message: "로그아웃 완료" });
-  });
+  res.json({ message: "클라이언트에서 토큰 삭제하세요" });
 });
 
 // 회원가입
@@ -72,7 +77,7 @@ router.post("/signup", async (req, res) => {
 
     const newUser = await User.create({
       userName,
-      password, // 모델에서 bcrypt 처리됨
+      password,
       email,
       city,
       phoneNum,
@@ -82,7 +87,8 @@ router.post("/signup", async (req, res) => {
       isSocial: false,
     });
 
-    res.json({ message: "회원가입 성공", userId: newUser.userId });
+    const token = createToken(newUser);
+    res.json({ message: "회원가입 성공", userId: newUser.userId, token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "회원가입 중 오류 발생" });
@@ -90,12 +96,8 @@ router.post("/signup", async (req, res) => {
 });
 
 // 로그인 상태 확인
-router.get("/me", (req, res) => {
-  if (req.session.user) {
-    res.json(req.session.user);
-  } else {
-    res.status(401).json({ message: "로그인 필요" });
-  }
+router.get("/me", authenticateToken, (req, res) => {
+  res.json(req.user);
 });
 
 // 카카오 로그인
@@ -124,8 +126,8 @@ router.get("/kakao", async (req, res) => {
     const userName = kakaoUser.kakao_account.profile.nickname;
     const email = kakaoUser.kakao_account.email || null;
     let isNewUser = false;
-    let user = await User.findOne({ where: { kakaoId } });
 
+    let user = await User.findOne({ where: { kakaoId } });
     if (!user) {
       user = await User.create({
         kakaoId,
@@ -139,19 +141,10 @@ router.get("/kakao", async (req, res) => {
       isNewUser = true;
     }
 
-    req.session.user = {
-      id: user.userId,
-      userName: user.userName,
-      email: user.email,
-      isManager: user.isManager,
-      isSupporter: user.isSupporter,
-      isSuperManager: user.isSuperManager,
-      isSocial: user.isSocial,
-    };
-    // ✅ 성공 시 JSON 반환
+    const token = createToken(user);
     res.json({
       message: "카카오 로그인 성공",
-      user: req.session.user,
+      token,
       isNewUser,
     });
   } catch (err) {
@@ -165,14 +158,13 @@ router.get("/google", async (req, res) => {
   const code = req.query.code;
 
   try {
-    // [1] 액세스 토큰 요청
     const tokenRes = await axios.post(
       "https://oauth2.googleapis.com/token",
       new URLSearchParams({
-        code: code,
+        code,
         client_id: GOOGLE_CLIENT_ID,
         client_secret: GOOGLE_CLIENT_SECRET,
-        redirect_uri: GOOGLE_REDIRECT_URI, // 예: http://localhost:3000/auth/google
+        redirect_uri: GOOGLE_REDIRECT_URI,
         grant_type: "authorization_code",
       }),
       {
@@ -182,7 +174,6 @@ router.get("/google", async (req, res) => {
 
     const access_token = tokenRes.data.access_token;
 
-    // [2] 사용자 정보 요청
     const userRes = await axios.get(
       "https://www.googleapis.com/oauth2/v3/userinfo",
       {
@@ -191,13 +182,12 @@ router.get("/google", async (req, res) => {
     );
 
     const googleUser = userRes.data;
-    const googleId = googleUser.sub; // 고유 식별자
+    const googleId = googleUser.sub;
     const userName = googleUser.name;
     const email = googleUser.email || null;
     let isNewUser = false;
-    // [3] DB에 유저 검색 또는 생성
-    let user = await User.findOne({ where: { googleId } });
 
+    let user = await User.findOne({ where: { googleId } });
     if (!user) {
       user = await User.create({
         googleId,
@@ -211,20 +201,10 @@ router.get("/google", async (req, res) => {
       isNewUser = true;
     }
 
-    // [4] 세션에 저장
-    req.session.user = {
-      id: user.userId,
-      userName: user.userName,
-      email: user.email,
-      isManager: user.isManager,
-      isSupporter: user.isSupporter,
-      isSuperManager: user.isSuperManager,
-      isSocial: user.isSocial,
-    };
-    // ✅ 성공 시 JSON 반환
+    const token = createToken(user);
     res.json({
       message: "구글 로그인 성공",
-      user: req.session.user,
+      token,
       isNewUser,
     });
   } catch (err) {

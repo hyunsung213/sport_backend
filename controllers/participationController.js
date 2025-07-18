@@ -3,12 +3,11 @@ const { updateGameProceedStatus } = require("../services/gameService");
 
 exports.createParticipation = async (req, res) => {
   try {
-    const userId = req.session?.user?.id;
-    const { gameId } = req.body;
-
+    const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: "로그인 필요" });
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
+    const { gameId } = req.body;
 
     const game = await Game.findByPk(gameId);
     if (!game) return res.status(404).json({ message: "게임 없음" });
@@ -49,12 +48,11 @@ exports.createParticipation = async (req, res) => {
 //  결제 후 참가확정
 exports.confirmParticipationPayment = async (req, res) => {
   try {
-    const userId = req.session?.user?.id;
-    const { gameId } = req.body;
-
+    const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: "로그인 필요" });
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
+    const { gameId } = req.body;
 
     const participation = await Participation.findOne({
       where: { userId, gameId, isConfirmed: false },
@@ -81,11 +79,11 @@ exports.confirmParticipationPayment = async (req, res) => {
 // 게임 참가 취소
 exports.deleteParticipation = async (req, res) => {
   try {
-    const userId = req.session?.user?.id;
     const { gameId } = req.body;
 
+    const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: "로그인 필요" });
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
 
     const deleted = await Participation.destroy({
@@ -114,9 +112,9 @@ exports.getParticipantsByGame = async (req, res) => {
 // 특정 유저가 참가한 게임 목록 조회
 exports.getParticipationsByUser = async (req, res) => {
   try {
-    const userId = req.session?.user?.id;
+    const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: "로그인 필요" });
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
 
     const games = await Participation.findAll({

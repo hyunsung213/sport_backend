@@ -2,11 +2,12 @@ const { Interest, Game, Place, Option, Photo, User } = require("../models");
 
 exports.addInterest = async (req, res) => {
   try {
-    const userId = req.session?.user?.id;
+    const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: "로그인 필요합니다" });
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
     const { gameId } = req.body;
+    console.log("gameID", gameId);
 
     await Interest.create({ userId, gameId });
     res.json({ message: "관심등록 완료" });
@@ -17,9 +18,9 @@ exports.addInterest = async (req, res) => {
 
 exports.deleteInterest = async (req, res) => {
   try {
-    const userId = req.session?.user?.id;
+    const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({ message: "로그인 필요합니다" });
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
 
     const gameId = req.params.gameId;
@@ -37,10 +38,7 @@ exports.deleteInterest = async (req, res) => {
 
 exports.getUserInterests = async (req, res) => {
   try {
-    // 세션에 로그인 정보가 있는 경우 우선 사용
-    const userId = req.session?.user?.id;
-
-    // URL 파라미터로 userId가 전달되면 사용, 없으면 세션 값 사용
+    const userId = req.user?.userId;
 
     if (!userId) {
       return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
@@ -58,7 +56,6 @@ exports.getUserInterests = async (req, res) => {
         },
       ],
     });
-
     res.json(interests);
   } catch (err) {
     res.status(500).json({ error: err.message });
