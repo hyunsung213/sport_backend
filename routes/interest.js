@@ -7,7 +7,7 @@ const { authenticateToken } = require("../middleware/auth"); // ✅ 올바른 �
 router.post("/", authenticateToken, interestController.addInterest);
 
 // 관심등록 해제
-router.delete("/:gameId", interestController.deleteInterest);
+router.delete("/:gameId", authenticateToken, interestController.deleteInterest);
 
 // 특정 유저의 관심 게임 목록 조회
 router.get("/my", authenticateToken, interestController.getUserInterests);

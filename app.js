@@ -28,7 +28,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // 프론트 주소
+    origin: "*", // 프론트 주소
     credentials: true,
   })
 );

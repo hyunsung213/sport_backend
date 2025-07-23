@@ -6,8 +6,8 @@ exports.addInterest = async (req, res) => {
     if (!userId) {
       return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
     }
+
     const { gameId } = req.body;
-    console.log("gameID", gameId);
 
     await Interest.create({ userId, gameId });
     res.json({ message: "관심등록 완료" });
@@ -18,6 +18,11 @@ exports.addInterest = async (req, res) => {
 
 exports.deleteInterest = async (req, res) => {
   try {
+    console.log("🛰 요청 IP:", req.ip);
+    console.log("🛰 Origin:", req.headers.origin);
+    console.log("🛰 Host:", req.headers.host);
+    console.log("🛰 User-Agent:", req.headers["user-agent"]);
+
     const userId = req.user?.userId;
     if (!userId) {
       return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
@@ -49,10 +54,6 @@ exports.getUserInterests = async (req, res) => {
       include: [
         {
           model: Game,
-          include: [
-            { model: Place, include: [Option, Photo, User] },
-            { model: User },
-          ],
         },
       ],
     });
