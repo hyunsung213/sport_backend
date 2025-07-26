@@ -1,4 +1,13 @@
-const { Participation, User, Game } = require("../models");
+const {
+  Participation,
+  User,
+  Game,
+  Match,
+  Place,
+  Team,
+  Rate,
+} = require("../models");
+const place = require("../models/place");
 const { updateGameProceedStatus } = require("../services/gameService");
 
 exports.createParticipation = async (req, res) => {
@@ -119,8 +128,43 @@ exports.getParticipationsByUser = async (req, res) => {
 
     const games = await Participation.findAll({
       where: { userId: userId },
-      include: [Game],
+      include: [
+        {
+          model: Game,
+          include: [
+            {
+              model: Place,
+            },
+            {
+              model: Match,
+              include: [
+                {
+                  model: Team,
+                  as: "TeamA",
+                  include: [
+                    { model: User, as: "PlayerA", include: [Rate] },
+                    { model: User, as: "PlayerB", include: [Rate] },
+                  ],
+                },
+                {
+                  model: Team,
+                  as: "TeamB",
+                  include: [
+                    { model: User, as: "PlayerA", include: [Rate] },
+                    { model: User, as: "PlayerB", include: [Rate] },
+                  ],
+                },
+              ],
+            },
+            {
+              model: User,
+              as: "Supporter",
+            },
+          ],
+        },
+      ],
     });
+
     res.json(games);
   } catch (err) {
     res.status(500).json({ error: err.message });

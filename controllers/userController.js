@@ -118,14 +118,34 @@ exports.getSupporters = async (req, res) => {
   }
 };
 
+const bcrypt = require("bcrypt");
+
 exports.updateUser = async (req, res) => {
   try {
-    const [updated] = await User.update(req.body, {
-      where: { userId: req.params.id },
-    });
-    if (updated) res.json({ message: "User updated" });
-    else res.status(404).json({ error: "User not found" });
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "로그인 필요 또는 userId 누락" });
+    }
+
+    const { userName, phoneNum, password, city } = req.body;
+
+    const updateFields = { userName, phoneNum, city };
+
+    if (password) {
+      // 🔐 비밀번호 해싱
+      const hashedPassword = await bcrypt.hash(password, 10); // saltRounds = 10
+      updateFields.password = hashedPassword;
+    }
+
+    const [updated] = await User.update(updateFields, { where: { userId } });
+
+    if (updated) {
+      res.json({ message: "User updated" });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
   } catch (err) {
+    console.error("User update error:", err);
     res.status(500).json({ error: err.message });
   }
 };

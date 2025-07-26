@@ -1,11 +1,22 @@
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("mydb", "devuser", "devpass", {
-  host: "localhost",
-  dialect: "mysql", // mariadb도 가능
-  port: 3306,
-  logging: false,
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST, // <- session-pooler 주소!
+    port: Number(process.env.DB_PORT),
+    dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+    logging: false,
+  }
+);
 
 // 모델 불러오기
 const User = require("./user")(sequelize);

@@ -75,9 +75,12 @@ router.post("/signup", async (req, res) => {
       return res.status(409).json({ message: "이미 등록된 이메일입니다." });
     }
 
+    // 🔐 비밀번호 해싱
+    const hashedPassword = await bcrypt.hash(password, 10); // saltRounds = 10
+
     const newUser = await User.create({
       userName,
-      password,
+      password: hashedPassword, // 해싱된 비밀번호 저장
       email,
       city,
       phoneNum,

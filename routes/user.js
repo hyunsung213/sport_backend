@@ -15,7 +15,7 @@ router.get("/", userController.getAllUsers);
 router.get("/:id", userController.getUserById); // ← 마지막에!
 
 // UPDATE / DELETE
-router.put("/:id", userController.updateUser);
+router.put("/edit", authenticateToken, userController.updateUser);
 router.delete("/:id", userController.deleteUser);
 
 module.exports = router;

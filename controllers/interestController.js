@@ -1,4 +1,13 @@
-const { Interest, Game, Place, Option, Photo, User } = require("../models");
+const {
+  Interest,
+  Game,
+  Place,
+  Option,
+  Photo,
+  User,
+  Rate,
+  Participation,
+} = require("../models");
 
 exports.addInterest = async (req, res) => {
   try {
@@ -54,6 +63,17 @@ exports.getUserInterests = async (req, res) => {
       include: [
         {
           model: Game,
+          include: [
+            {
+              model: Place,
+              include: [Option, Photo, User],
+            },
+            {
+              model: User,
+              through: { model: Participation, attributes: ["isConfirmed"] },
+              include: { model: Rate },
+            },
+          ],
         },
       ],
     });
