@@ -15,33 +15,33 @@ module.exports = (sequelize) => {
         references: {
           model: "Place",
           key: "placeId",
-          onDelete: "CASCADE",
         },
+        onDelete: "CASCADE",
       },
       direction: {
         type: DataTypes.STRING,
-        defaultValue: false,
         allowNull: true,
+        defaultValue: "",
       },
       parking: {
         type: DataTypes.STRING,
-        defaultValue: false,
         allowNull: true,
+        defaultValue: "",
       },
       smoking: {
         type: DataTypes.STRING,
-        defaultValue: false,
         allowNull: true,
+        defaultValue: "",
       },
       stringingService: {
         type: DataTypes.STRING,
-        defaultValue: false,
         allowNull: true,
+        defaultValue: "",
       },
       etc: {
         type: DataTypes.STRING,
-        defaultValue: false,
         allowNull: true,
+        defaultValue: "",
       },
     },
     {

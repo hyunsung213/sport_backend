@@ -34,6 +34,9 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ where: { email } });
 
+  console.log("email: ", email);
+  console.log("password: ", password);
+
   if (!user || user.isSocial) {
     return res
       .status(401)
@@ -41,7 +44,10 @@ router.post("/login", async (req, res) => {
   }
 
   const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return res.status(401).json({ message: "비밀번호 오류" });
+  if (!valid) {
+    console.log("비밀번호 오류");
+    return res.status(401).json({ message: "비밀번호 오류" });
+  }
 
   const token = createToken(user);
   res.json({ message: "로그인 성공", token });

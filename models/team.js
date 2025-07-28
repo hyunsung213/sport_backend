@@ -16,6 +16,7 @@ module.exports = (sequelize) => {
           model: "User",
           key: "userId",
         },
+        onDelete: "CASCADE",
       },
       playerB: {
         type: DataTypes.INTEGER,
@@ -24,6 +25,7 @@ module.exports = (sequelize) => {
           model: "User",
           key: "userId",
         },
+        onDelete: "CASCADE",
       },
     },
     {

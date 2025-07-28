@@ -15,8 +15,8 @@ module.exports = (sequelize) => {
         references: {
           model: "Place",
           key: "placeId",
-          onDelete: "CASCADE",
         },
+        onDelete: "CASCADE",
       },
       isToilet: {
         type: DataTypes.BOOLEAN,
