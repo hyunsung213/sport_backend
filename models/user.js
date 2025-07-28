@@ -12,15 +12,15 @@ module.exports = (sequelize) => {
       },
       userName: {
         type: DataTypes.STRING,
-        allowNull: true, // ✅ 소셜 유저 고려
+        allowNull: true,
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: true, // ✅ 소셜 로그인 시 없음
+        allowNull: true,
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: true, // ✅ 일부 소셜 유저는 이메일이 없을 수도 있음
+        allowNull: true,
       },
       city: {
         type: DataTypes.STRING,
@@ -45,8 +45,6 @@ module.exports = (sequelize) => {
         defaultValue: false,
         allowNull: false,
       },
-
-      // ✅ 소셜 로그인 관련 필드
       kakaoId: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -57,22 +55,15 @@ module.exports = (sequelize) => {
       },
       isSocial: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
         defaultValue: false,
+        allowNull: false,
       },
     },
     {
-      tableName: "User",
+      tableName: "User", // 또는 "Users", 또는 user (소문자)
       timestamps: false,
     }
   );
-
-  // ✅ 비밀번호 해싱은 일반 로그인 사용자만
-  User.beforeCreate(async (user) => {
-    if (user.password) {
-      user.password = await bcrypt.hash(user.password, 10);
-    }
-  });
 
   return User;
 };

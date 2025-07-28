@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Game", // 실제 DB 테이블명 또는 모델명
+          model: "Game",
           key: "gameId",
         },
         onDelete: "CASCADE",
@@ -30,6 +30,7 @@ module.exports = (sequelize) => {
           model: "Team",
           key: "teamId",
         },
+        onDelete: "CASCADE",
       },
       teamB: {
         type: DataTypes.INTEGER,
@@ -38,6 +39,7 @@ module.exports = (sequelize) => {
           model: "Team",
           key: "teamId",
         },
+        onDelete: "CASCADE",
       },
       winnerTeam: {
         type: DataTypes.ENUM("TeamA", "TeamB"),
@@ -58,11 +60,12 @@ module.exports = (sequelize) => {
           model: "User",
           key: "userId",
         },
+        onDelete: "SET NULL",
       },
     },
     {
       tableName: "Match",
-      timestamps: true, // createdAt, updatedAt 자동 추가
+      timestamps: true,
     }
   );
 

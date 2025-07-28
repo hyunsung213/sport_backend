@@ -16,6 +16,7 @@ module.exports = (sequelize) => {
           model: "User",
           key: "userId",
         },
+        onDelete: "CASCADE",
       },
       rateValue: {
         type: DataTypes.INTEGER,

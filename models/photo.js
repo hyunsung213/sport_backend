@@ -12,7 +12,10 @@ module.exports = (sequelize) => {
       placeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: { model: "Place", key: "placeId" },
+        references: {
+          model: "Place",
+          key: "placeId",
+        },
         onDelete: "CASCADE",
       },
       photoUrl: {
