@@ -28,7 +28,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "*", // 프론트 주소
+    origin: "https://sport-client-43456.vercel.app/", // 프론트 주소
     credentials: true,
   })
 );
