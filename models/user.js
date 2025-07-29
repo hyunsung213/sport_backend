@@ -1,4 +1,5 @@
 const { DataTypes } = require("sequelize");
+const bcrypt = require("bcrypt");
 
 module.exports = (sequelize) => {
   const User = sequelize.define(
@@ -11,23 +12,55 @@ module.exports = (sequelize) => {
       },
       userName: {
         type: DataTypes.STRING,
-        allowNull: false,
-      },
-      nickname: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       password: {
         type: DataTypes.STRING,
+        allowNull: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      city: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      phoneNum: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      isManager: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
       },
-      email: DataTypes.STRING,
-      phoneNum: DataTypes.STRING,
-      isManager: DataTypes.BOOLEAN,
-      grade: DataTypes.INTEGER,
+      isSupporter: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      isSuperManager: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      kakaoId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      googleId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      isSocial: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
     },
     {
-      tableName: "User",
+      tableName: "User", // 또는 "Users", 또는 user (소문자)
       timestamps: false,
     }
   );

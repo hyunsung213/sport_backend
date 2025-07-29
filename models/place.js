@@ -24,6 +24,7 @@ module.exports = (sequelize) => {
           model: "User",
           key: "userId",
         },
+        onDelete: "CASCADE", // 위치 중요!
       },
     },
     {

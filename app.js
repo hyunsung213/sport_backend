@@ -1,10 +1,10 @@
 require("dotenv").config();
-const express = require("express");
+const express = require("express"); // ✅ 정상 express import
 const { sequelize } = require("./models");
 const cors = require("cors");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // 라우터 불러오기
 const userRoutes = require("./routes/user");
@@ -12,12 +12,29 @@ const placeRoutes = require("./routes/place");
 const gameRoutes = require("./routes/game");
 const optionRoutes = require("./routes/option");
 const participationRoutes = require("./routes/participation");
+const photoRoutes = require("./routes/photo");
+const interestRoutes = require("./routes/interest");
+const authRoutes = require("./routes/auth");
+const noteRoutes = require("./routes/note");
+const rateRoutes = require("./routes/rate");
+const teamRoutes = require("./routes/team");
+const matchRoutes = require("./routes/match");
+
+// 스케쥴러 불러오기
+require("./scheduler/autoCancelUnpaid");
 
 // 미들웨어
 app.use(express.json());
 
-// 다른 도메인도 허용(프론트랑 연결)
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONT_SERVER, // 프론트 주소
+    credentials: true,
+  })
+);
+
+// 정적 파일 서비스
+app.use("/uploads", express.static("uploads"));
 
 // 라우터 연결
 app.use("/users", userRoutes);
@@ -25,11 +42,13 @@ app.use("/places", placeRoutes);
 app.use("/games", gameRoutes);
 app.use("/options", optionRoutes);
 app.use("/participations", participationRoutes);
-
-// 기본 라우터
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+app.use("/interests", interestRoutes);
+app.use("/auth", authRoutes);
+app.use("/notes", noteRoutes);
+app.use("/rates", rateRoutes);
+app.use("/teams", teamRoutes);
+app.use("/matches", matchRoutes);
+app.use("/photos", photoRoutes);
 
 // DB 연결 및 서버 실행
 const startServer = async () => {

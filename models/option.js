@@ -16,6 +16,7 @@ module.exports = (sequelize) => {
           model: "Place",
           key: "placeId",
         },
+        onDelete: "CASCADE",
       },
       isToilet: {
         type: DataTypes.BOOLEAN,

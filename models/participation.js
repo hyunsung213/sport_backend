@@ -11,6 +11,7 @@ module.exports = (sequelize) => {
           model: "Game",
           key: "gameId",
         },
+        onDelete: "CASCADE",
       },
       userId: {
         type: DataTypes.INTEGER,
@@ -19,6 +20,12 @@ module.exports = (sequelize) => {
           model: "User",
           key: "userId",
         },
+        onDelete: "CASCADE",
+      },
+      isConfirmed: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
     },
     {
